@@ -1,0 +1,48 @@
+<resources>
+    <string name="auth_login_title">Accedi</string>
+    <string name="auth_signup_title">Registrati</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_login_button">Accedi</string>
+    <string name="auth_signup_button">Crea account</string>
+    <string name="auth_switch_to_signup">Non hai un account? Registrati</string>
+    <string name="auth_switch_to_login">Hai già un account? Accedi</string>
+    <string name="auth_password_too_short">La password deve avere almeno 6 caratteri</string>
+    <string name="auth_check_email">Account creato: controlla la mail per confermarlo</string>
+
+    <string name="home_title">I miei task</string>
+    <string name="home_empty">Nessun task. Crea il primo!</string>
+    <string name="home_logout">Esci</string>
+    <string name="home_create_task">Crea task</string>
+    <string name="home_retry">Riprova</string>
+    <string name="task_no_due_date">–</string>
+    <string name="task_overdue">Scaduto</string>
+
+    <string name="error_network">Connessione assente. Controlla la rete e riprova.</string>
+    <string name="error_unauthorized">Credenziali errate o sessione scaduta.</string>
+    <string name="error_generic">Qualcosa è andato storto. Riprova.</string>
+    <string name="edit_create_title">Nuovo task</string>
+    <string name="edit_edit_title">Modifica task</string>
+    <string name="edit_task_title">Titolo</string>
+    <string name="edit_task_title_required">Il titolo è obbligatorio</string>
+    <string name="edit_description">Descrizione</string>
+    <string name="edit_priority">Priorità</string>
+    <string name="edit_status">Stato</string>
+    <string name="edit_tags">Tag</string>
+    <string name="edit_due_date">Scadenza</string>
+    <string name="edit_no_due_date">Nessuna scadenza</string>
+    <string name="edit_pick_date">Scegli data</string>
+    <string name="edit_remove_due_date">Rimuovi</string>
+    <string name="edit_save">Salva</string>
+    <string name="edit_delete">Elimina</string>
+    <string name="edit_cancel">Annulla</string>
+    <string name="edit_back">Indietro</string>
+    <string name="edit_delete_confirm_title">Eliminare il task?</string>
+    <string name="edit_delete_confirm_message">Questa operazione non si può annullare.</string>
+    <string name="edit_ok">OK</string>
+    <string name="filter_search">Cerca task…</string>
+    <string name="sort_position">Posizione</string>
+    <string name="sort_priority">Priorità</string>
+    <string name="sort_status">Stato</string>
+    <string name="sort_due_date">Scadenza</string>
+</resources>

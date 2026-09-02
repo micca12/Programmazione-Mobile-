@@ -1,0 +1,48 @@
+<resources>
+    <string name="auth_login_title">Log in</string>
+    <string name="auth_signup_title">Sign up</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_login_button">Log in</string>
+    <string name="auth_signup_button">Create account</string>
+    <string name="auth_switch_to_signup">No account? Sign up</string>
+    <string name="auth_switch_to_login">Already registered? Log in</string>
+    <string name="auth_password_too_short">Password must be at least 6 characters</string>
+    <string name="auth_check_email">Account created: check your email to confirm it</string>
+
+    <string name="home_title">My tasks</string>
+    <string name="home_empty">No tasks yet. Create your first one!</string>
+    <string name="home_logout">Log out</string>
+    <string name="home_create_task">Create task</string>
+    <string name="home_retry">Retry</string>
+    <string name="task_no_due_date">–</string>
+    <string name="task_overdue">Overdue</string>
+
+    <string name="error_network">No connection. Check your network and retry.</string>
+    <string name="error_unauthorized">Wrong credentials or session expired.</string>
+    <string name="error_generic">Something went wrong. Please retry.</string>
+    <string name="edit_create_title">New task</string>
+    <string name="edit_edit_title">Edit task</string>
+    <string name="edit_task_title">Title</string>
+    <string name="edit_task_title_required">Title is required</string>
+    <string name="edit_description">Description</string>
+    <string name="edit_priority">Priority</string>
+    <string name="edit_status">Status</string>
+    <string name="edit_tags">Tags</string>
+    <string name="edit_due_date">Due date</string>
+    <string name="edit_no_due_date">No due date</string>
+    <string name="edit_pick_date">Pick date</string>
+    <string name="edit_remove_due_date">Remove</string>
+    <string name="edit_save">Save</string>
+    <string name="edit_delete">Delete</string>
+    <string name="edit_cancel">Cancel</string>
+    <string name="edit_back">Back</string>
+    <string name="edit_delete_confirm_title">Delete task?</string>
+    <string name="edit_delete_confirm_message">This cannot be undone.</string>
+    <string name="edit_ok">OK</string>
+    <string name="filter_search">Search tasks…</string>
+    <string name="sort_position">Position</string>
+    <string name="sort_priority">Priority</string>
+    <string name="sort_status">Status</string>
+    <string name="sort_due_date">Due date</string>
+</resources>
