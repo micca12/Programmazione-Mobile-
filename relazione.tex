@@ -1,5 +1,6 @@
 % Relazione di progetto - Laboratorio di Programmazione di Sistemi Mobili
 % Compilare con: pdflatex relazione.tex
+
 \documentclass[11pt,a4paper]{article}
 
 \usepackage[utf8]{inputenc}
@@ -13,14 +14,19 @@
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{hyperref}
-\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue!55!black}
 
-% un po' d'aria fra le righe e attorno ai titoli
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=blue!55!black
+}
+
 \linespread{1.12}
 \setlength{\parskip}{0.7\baselineskip}
 \setlength{\emergencystretch}{1em}
 
 \definecolor{codebg}{gray}{0.96}
+
 \lstset{
   basicstyle=\ttfamily\small,
   backgroundcolor=\color{codebg},
@@ -36,7 +42,7 @@
   frame=tb,
   framerule=0pt,
   aboveskip=1.2em,
-  belowskip=1.2em,
+  belowskip=1.2em
 }
 
 \begin{document}
@@ -46,7 +52,7 @@
 \begin{center}
   \vspace*{1.5cm}
 
-  {\LARGE\bfseries TaskManager}
+  {\LARGE TaskManager}
 
   \vspace{0.6em}
 
@@ -54,99 +60,126 @@
 
   \vspace{2.2em}
 
-  % TODO: mettere i propri dati
-  Nome Cognome \quad--\quad matricola 000000
-
-  \texttt{nome.cognome@studio.unibo.it}
+Matteo Micca
 
   \vspace{2em}
 
-  Laboratorio di Programmazione di Sistemi Mobili\\
-  a.a.\ 2025/26 \quad--\quad progetto individuale, Android e Kotlin
+
 
   \vspace{1em}
 
   \today
 \end{center}
 
-\vspace{2cm}
+\newpage
+
+\tableofcontents
+
+\newpage
 
 
-\section*{Da dove nasce}
-\addcontentsline{toc}{section}{Da dove nasce}
+\section{Da dove nasce}
 
-Per un altro corso mi ero fatto una web app per tenere in ordine i task.
-Titolo, priorità, stato, due tag, una scadenza. Niente di che, però la usavo.
+Per un altro corso avevo già realizzato una piccola web app per organizzare i
+task. Ogni task aveva un titolo, una priorità, uno stato, fino a due tag e una
+scadenza. Era un progetto semplice, ma la usavo davvero.
 
-Il problema è che girava nel browser. E i task uno se li ricorda in fila alla
-posta, non seduto davanti al portatile. Da lì l'idea: rifarla su Android.
+Il problema era che funzionava solo dal browser. Per controllare o modificare un
+task dovevo quindi avere il computer a disposizione. Da qui è nata l'idea di
+portare la stessa applicazione su Android, mantenendo la logica che avevo già
+sviluppato.
 
-Il backend l'ho lasciato dov'era, su Supabase, con le stesse tabelle. Lo dico
-subito perché sembra una scorciatoia, e un po' lo è. Ma avere il database già in
-piedi mi ha lasciato tutto il tempo per la parte Android, che poi è quella
-dell'esame. Il conto l'ho pagato da un'altra parte: certe scelte di Supabase me
-le sono trovate addosso, e un paio di serate le ho buttate lì dentro. Ne parlo
-più avanti, perché è la parte in cui ho imparato qualcosa.
+Per il backend ho continuato a usare Supabase e le stesse tabelle del progetto
+precedente. In questo modo ho potuto concentrarmi principalmente sulla parte
+Android.
 
-Cosa fa l'app, in breve. Ti registri, fai login. Vedi i tuoi task come card: il
-colore è la priorità, lo stato è un'etichetta che avanza se ci tocchi sopra,
-senza aprire niente. Crei, modifichi, elimini. Tag, scadenza con data e ora.
-Sopra c'è una barra con ricerca, filtri e ordinamento. Chiudi l'app, la riapri,
-sei ancora dentro. C'è l'italiano e c'è l'inglese.
+L'app permette di registrarsi e fare login, visualizzare i propri task e
+modificarli direttamente dalla lista. I task sono mostrati come card e il
+colore cambia in base alla priorità. Lo stato può essere modificato con un
+tocco.
 
-Una cosa da sapere prima di leggere il codice: lato server non ho scritto
-niente. Le quattro tabelle stanno su Supabase ed escono via REST. Chi vede cosa
-lo decide il database, con le policy di Row Level Security. Ecco perché nelle
-GET non filtro mai per \texttt{user\_id}: non serve, ci pensa lui guardando il
-token con cui arrivo.
+È possibile creare, modificare ed eliminare i task, aggiungere tag e impostare
+una scadenza con data e ora.
+
+Nella parte superiore sono presenti ricerca, filtri e ordinamento. La sessione
+viene mantenuta anche dopo la chiusura dell'app, quindi non è necessario fare
+nuovamente il login alla riapertura.
+
+L'interfaccia è disponibile in italiano e in inglese.
+
+Il lato server non è stato sviluppato all'interno di questo progetto. Le quattro
+tabelle utilizzate dall'applicazione sono ospitate su Supabase e vengono
+raggiunte tramite API REST.
+
+L'accesso ai dati viene regolato dalle policy di Row Level Security. Per questo
+motivo le richieste GET non devono specificare ogni volta lo
+\texttt{user\_id}: è Supabase a stabilire quali righe possono essere restituite
+in base al token dell'utente.
 
 
-\section*{Come è fatto dentro}
-\addcontentsline{toc}{section}{Come è fatto dentro}
+\section{Come è fatto dentro}
 
-Quattro moduli Gradle. E qui mi fermo un attimo, perché la divisione in moduli
-sembra sempre una cosa messa lì per la relazione, e invece a me serviva davvero.
+Il progetto è diviso in quattro moduli Gradle. Ho scelto questa struttura per
+tenere separate le responsabilità.
 
-Le dipendenze fra i moduli vanno in un verso solo. Risultato: se provo a
-scrivere una chiamata di rete dentro una schermata, non compila. Non è una
-regola che devo ricordarmi io, è una regola che me la ricorda Gradle.
+Le dipendenze tra i moduli seguono una sola direzione. Ad esempio,
+\texttt{:uicompose} non può accedere direttamente a \texttt{:data}.
 
 \begin{table}[h]
 \centering
-\begin{tabular}{@{}llp{6.2cm}@{}}
+\begin{tabular}{@{}lll@{}}
 \toprule
-\textbf{Modulo} & \textbf{Dipende da} & \textbf{Cosa c'è dentro} \\
+Modulo & Dipende da & Cosa contiene \\
 \midrule
-\texttt{:domain} & niente & modelli, interfacce dei repository, use case \\
+
+\texttt{:domain} & niente &
+modelli, repository e use case \\
+
 \addlinespace[0.3em]
-\texttt{:data} & \texttt{:domain} & Retrofit, Moshi, DataStore, i repository veri \\
+
+\texttt{:data} & \texttt{:domain} &
+Retrofit, Moshi, DataStore e repository \\
+
 \addlinespace[0.3em]
-\texttt{:uicompose} & \texttt{:domain} & schermate Compose e ViewModel \\
+
+\texttt{:uicompose} & \texttt{:domain} &
+schermate Compose e ViewModel \\
+
 \addlinespace[0.3em]
-\texttt{:app} & tutti & \texttt{Application}, manifest, cablaggio \\
+
+\texttt{:app} & tutti &
+Application, manifest e configurazione generale \\
+
 \bottomrule
 \end{tabular}
 \end{table}
 
-\texttt{:domain} è il cuore, ed è povero apposta. Non dipende da nessuno.
-L'unica libreria che si porta dietro sono le coroutine, e solo perché i
-repository espongono dei \texttt{Flow}. Dentro ci sono i modelli, le interfacce
-dei due repository (solo le interfacce: il contratto) e gli use case, uno per
-file.
+Il modulo \texttt{:domain} è il centro dell'applicazione. Non dipende dagli
+altri moduli e contiene i modelli, le interfacce dei repository e gli use case.
 
-\texttt{:data} è dove finisce tutto quello che tocca l'esterno. Le due
-interfacce Retrofit, i DTO di Moshi con i mapper, il \texttt{SessionManager} che
-tiene la sessione su DataStore, e i repository veri. Le chiavi di Supabase le
-tengo in \texttt{local.properties}, che non committo; arrivano al codice
-passando per il \texttt{BuildConfig}.
+Nel modulo \texttt{:data} si trova tutto ciò che comunica con l'esterno. Sono
+presenti le interfacce Retrofit, i DTO gestiti da Moshi, i mapper,
+il \texttt{SessionManager} e le implementazioni dei repository.
 
-\texttt{:uicompose} sono le tre schermate: login, dashboard, form. Ognuna col
-suo ViewModel e la sua factory. In \texttt{common} ci sono i pezzi che riuso,
-badge, banner d'errore, loader, la formattazione delle date. Questo modulo non
-sa nemmeno che esista una rete.
+Il \texttt{SessionManager} gestisce la sessione tramite DataStore.
 
-\texttt{:app} è quattro file in croce: manifest, tema, e la
-\texttt{CustomApplication}. Che però fa la cosa che regge tutto il resto.
+Le chiavi necessarie per Supabase vengono mantenute in
+\texttt{local.properties}, che non viene incluso nel repository. Da lì vengono
+passate al codice attraverso \texttt{BuildConfig}.
+
+Il modulo \texttt{:uicompose} contiene le tre schermate principali:
+login, dashboard e form per la creazione o modifica dei task.
+
+Nella cartella \texttt{common} ci sono invece i componenti riutilizzati in più
+punti, come badge, banner di errore, loader e funzioni per la formattazione
+delle date.
+
+La UI non conosce direttamente la parte di rete. Comunica con il livello
+\texttt{domain}, mantenendo separata la parte grafica da quella di accesso ai
+dati.
+
+Il modulo \texttt{:app} contiene principalmente il manifest, il tema e la
+\texttt{CustomApplication}, utilizzata per inizializzare le dipendenze.
 
 \begin{lstlisting}
 class CustomApplication : Application() {
@@ -159,101 +192,123 @@ class CustomApplication : Application() {
 }
 \end{lstlisting}
 
-Dependency injection a mano, senza Hilt, come a lezione. Mi piace che il punto
-in cui si incastra tutto siano cinque righe leggibili. Mi piace meno che per
-aggiungere una dipendenza debba aprire tre file. Per un progetto di questa
-taglia, però, va benissimo così.
+Per la dependency injection ho scelto una soluzione manuale, senza utilizzare
+Hilt, seguendo l'approccio visto a lezione.
+
+Per un progetto di queste dimensioni è abbastanza semplice da seguire, anche se
+richiede di modificare più punti quando viene aggiunta una nuova dipendenza.
 
 
-\section*{I requisiti d'esame, dove stanno}
-\addcontentsline{toc}{section}{I requisiti d'esame, dove stanno}
+\section{I requisiti d'esame}
 
 \begin{table}[h]
 \centering
 \begin{tabular}{@{}p{4.2cm}p{9.4cm}@{}}
 \toprule
-\textbf{Requisito} & \textbf{Dove sta} \\
+Requisito & Dove viene utilizzato \\
 \midrule
+
 Separazione in package e moduli &
-Quattro moduli Gradle, dipendenze in un verso solo, package divisi per
-responsabilità dentro a ciascuno. \\
+Quattro moduli Gradle, con dipendenze a senso unico e package organizzati per
+responsabilità. \\
+
 \addlinespace[0.5em]
+
 Componenti di lifecycle &
-Un \texttt{ViewModel} per schermata, con la sua factory. Lo stato esce come
-\texttt{StateFlow} e la UI lo raccoglie con
-\texttt{collectAsStateWithLifecycle}. Quel poco che vive nella schermata sta in
-\texttt{rememberSaveable}, così regge la rotazione. \\
+Ogni schermata ha un proprio \texttt{ViewModel} e una factory.
+Lo stato viene esposto tramite \texttt{StateFlow} e raccolto dalla UI con
+\texttt{collectAsStateWithLifecycle}.
+
+Lo stato locale viene mantenuto con \texttt{rememberSaveable}, anche durante
+la rotazione. \\
+
 \addlinespace[0.5em]
+
 Coroutine, main thread separato dal background &
-Repository in \texttt{withContext(Dispatchers.IO)}, ViewModel in
-\texttt{viewModelScope}. La UI resta sul main thread e riceve solo flussi già
-pronti. Le quattro GET del refresh partono insieme con \texttt{async}, visto che
-non dipendono l'una dall'altra. \\
+I repository usano \texttt{withContext(Dispatchers.IO)}, mentre i ViewModel
+usano \texttt{viewModelScope}.
+
+Durante il refresh, le quattro GET vengono avviate in parallelo con
+\texttt{async}. \\
+
 \addlinespace[0.5em]
+
 Almeno due chiamate ad API remote &
-Dieci endpoint. \texttt{signup} e \texttt{token} (login e rinnovo) per
-l'autenticazione; \texttt{GET}, \texttt{POST}, \texttt{PATCH} e \texttt{DELETE}
-su \texttt{tasks}; una \texttt{GET} a testa su \texttt{tags},
-\texttt{priorities} e \texttt{statuses}. \\
+Sono presenti dieci endpoint.
+
+\texttt{signup} e \texttt{token} gestiscono registrazione, login e rinnovo
+della sessione.
+
+Per \texttt{tasks} vengono utilizzate \texttt{GET}, \texttt{POST},
+\texttt{PATCH} e \texttt{DELETE}. Sono inoltre presenti GET per
+\texttt{tags}, \texttt{priorities} e \texttt{statuses}. \\
+
 \addlinespace[0.5em]
+
 Opzionale 1: salvataggio in uno storage locale &
-Il \texttt{SessionManager} scrive access token, refresh token, id utente e
-scadenza su DataStore Preferences, e li rilegge all'avvio: l'app riparte già
-autenticata. Al logout svuota tutto. \\
+Il \texttt{SessionManager} salva access token, refresh token, id utente e
+scadenza tramite DataStore Preferences.
+
+I dati vengono recuperati all'avvio e cancellati al logout. \\
+
 \bottomrule
 \end{tabular}
 \end{table}
 
 
-\section*{Le cose di cui sono contento}
-\addcontentsline{toc}{section}{Le cose di cui sono contento}
+\section{Le scelte più importanti}
 
-\subsection*{Le dipendenze puntano tutte verso il centro}
+\subsection{Le dipendenze puntano tutte verso il centro}
 
-Il vincolo che ho tenuto più stretto è che \texttt{:uicompose} non vede
-\texttt{:data}. Non è buona volontà: un ViewModel non riesce proprio a scrivere
-il nome di \texttt{TaskRepositoryImpl}, perché quella classe non ce l'ha nel
-classpath. Tutto passa dagli use case, che parlano solo di interfacce dichiarate
-in \texttt{:domain}.
+Ho cercato di impedire a \texttt{:uicompose} di accedere direttamente a
+\texttt{:data}.
 
-Se domani volessi buttare Supabase e mettere altro, riscriverei \texttt{:data} e
-non toccherei una riga di interfaccia. Stessa cosa per la cache locale che non
-ho fatto in tempo ad aggiungere: entrerebbe tutta lì dentro, dietro alle stesse
-interfacce, e le schermate non se ne accorgerebbero.
+Un ViewModel non può quindi utilizzare direttamente
+\texttt{TaskRepositoryImpl}. Passa invece dagli use case, che utilizzano le
+interfacce definite in \texttt{:domain}.
 
-\subsection*{La serata persa dietro a un 200 OK}
+In questo modo, se in futuro volessi sostituire Supabase con un altro backend,
+il lavoro principale rimarrebbe nel modulo \texttt{:data}.
 
-Questa la racconto tutta, perché è la sera in cui ho capito più cose.
+Lo stesso principio potrebbe essere usato per aggiungere una cache locale senza
+modificare le schermate.
 
-Riavvio il telefono, apro l'app: zero task. Nessun crash. Nessun errore. Nessuna
-riga rossa nel log. Solo una lista vuota, come se non avessi mai creato niente.
-E il token stava lì, lo vedevo dentro DataStore.
 
-Ci ho messo un po' a trovarlo. Il fatto è che leggere da DataStore è asincrono.
-Le chiamate partivano prima che il token tornasse dal disco, quindi partivano
-senza l'header \texttt{Authorization}. Fin qui ci sta.
+\subsection{Il problema di un 200 OK}
 
-La parte cattiva è la risposta. Supabase non ti dice che non sei autenticato. La
-Row Level Security fa il suo lavoro, non trova righe che io possa vedere, e
-risponde \texttt{200 OK} con una lista vuota. Un errore di autenticazione
-vestito da risposta giusta.
+Uno dei problemi che mi ha fatto perdere più tempo è stato il ripristino della
+sessione.
 
-Da lì la soluzione. Il \texttt{SessionManager} alza un flag quando ha finito di
-leggere il disco, e ogni chiamata di rete lo aspetta prima di partire. Stessa
-attesa dentro \texttt{AuthRepositoryImpl}: \texttt{isLoggedIn} sta zitto finché
-il ripristino non è concluso. Se no, per un istante la UI vede un falso ``non
-loggato'' e sbatte la schermata di login in faccia a uno che era già dentro.
+Dopo aver riavviato il telefono, aprivo l'app e non vedevo nessun task. Non
+c'erano crash né errori nel log. La lista era semplicemente vuota.
 
-E già che ci sono: è lo stesso motivo per cui ho due client HTTP invece di uno.
-Gli endpoint di login vogliono solo la chiave anonima del progetto, quelli sulle
-tabelle vogliono anche il token dell'utente come \texttt{Bearer}. Sembra roba
-duplicata, finché non mandi la chiave anonima sulle tabelle e ti ritrovi,
-indovina un po', un altro \texttt{200 OK} con la lista vuota.
+Il token era però presente in DataStore.
 
-\subsection*{Gli errori sono tipi, non frasi}
+Il problema era dovuto alla lettura asincrona da DataStore. Le chiamate alla rete
+potevano partire prima del recupero del token e quindi venivano eseguite senza
+l'header \texttt{Authorization}.
 
-Il modulo \texttt{:data} non sa in che lingua parla l'utente. Quindi non è lui
-che deve scrivere i messaggi. Espone tre casi e basta:
+Supabase poteva comunque restituire un \texttt{200 OK} con una lista vuota a
+causa delle policy di Row Level Security. Per l'app sembrava quindi una
+risposta valida.
+
+Ho risolto il problema facendo aspettare le richieste di rete fino al termine
+del ripristino della sessione.
+
+Ho applicato lo stesso principio anche a \texttt{AuthRepositoryImpl}, evitando
+che \texttt{isLoggedIn} restituisse temporaneamente \texttt{false}.
+
+Ho inoltre scelto di utilizzare due client HTTP distinti. Quello per
+l'autenticazione usa la chiave anonima, mentre quello per le richieste alle
+tabelle aggiunge il token dell'utente come \texttt{Bearer}.
+
+
+\subsection{Gli errori sono rappresentati come tipi}
+
+Ho evitato di costruire i messaggi di errore direttamente nel modulo
+\texttt{:data}.
+
+Il livello dati restituisce solamente alcuni tipi:
 
 \begin{lstlisting}
 sealed class ErrorState {
@@ -263,82 +318,115 @@ sealed class ErrorState {
 }
 \end{lstlisting}
 
-Il testo lo mette la UI, pescando da \texttt{values/strings.xml} o da
-\texttt{values-it/strings.xml}. Se domani serve il francese aggiungo un file di
-stringhe e non tocco nient'altro.
+È poi la UI a trasformarli nei messaggi da mostrare all'utente, usando le
+stringhe presenti in \texttt{values/strings.xml} e
+\texttt{values-it/strings.xml}.
 
-\subsection*{Filtrare non deve chiamare la rete}
-
-Filtri, ricerca e ordinamento sono una funzione pura, in \texttt{:domain}. Le
-dai la lista e i filtri, ti torna la lista da mostrare. Il
-\texttt{HomeViewModel} la richiama con \texttt{combine} ogni volta che cambia
-qualcosa. Quindi scrivere nella casella di ricerca non fa partire nessuna
-chiamata.
-
-E siccome quella funzione non sa niente di Android, la provo con una JVM
-normale, senza emulatore acceso. Che poi è il criterio con cui ho scelto dove
-mettere i test: dove il codice si può rompere in silenzio. Il parsing delle
-risposte di login, compreso il caso in cui la registrazione chiede la conferma
-via mail e non torna nessun token. Il mapping delle righe di PostgREST, con i
-campi che mancano e \texttt{tag\_ids} nullo. E i filtri. Per riuscire a testare
-i mapper li ho resi \texttt{internal} invece che privati dentro al repository:
-ci ho rimesso un po' di incapsulamento, ci ho guadagnato i test dove servivano.
-
-\subsection*{Meglio zoppicare che morire}
-
-Ci sono tre punti in cui l'app poteva crashare per colpa di roba che non dipende
-da me, e in tutti e tre ho preferito farla zoppicare.
-
-Una riga che arriva senza \texttt{id} la butto via con \texttt{mapNotNull},
-invece di far saltare il parsing di tutta la lista. Se DataStore è illeggibile
-risulti non loggato: scomodo, ma vivo. E se \texttt{local.properties} manca del
-tutto, l'URL di base diventa un host palesemente finto, così l'app parte lo
-stesso e le chiamate falliscono con un normale errore di rete, invece di
-piantarsi all'avvio.
+In questo modo per aggiungere una nuova lingua basta aggiungere il relativo
+file di stringhe.
 
 
-\section*{Cosa manca}
-\addcontentsline{toc}{section}{Cosa manca}
+\subsection{Filtrare non deve chiamare la rete}
 
-Room, prima di tutto. Oggi senza rete l'app non mostra niente, ed è il limite
-che si sente di più usandola. Il posto però c'è già: la dipendenza è dichiarata,
-\texttt{TaskRepositoryImpl} ha già il \texttt{Context}, e
-\texttt{startFetchTasks()} l'ho tenuto separato da \texttt{refreshTasks()}
-proprio pensando a quel giorno. Mancano entity, DAO e database. Quando ci sarà,
-va svuotata al logout, se no due account sullo stesso telefono si vedono i dati
-a vicenda.
+Ricerca, filtri e ordinamento vengono gestiti localmente.
 
-Poi la foto sul task. Il campo \texttt{photoUrl} nel modello c'è, il permesso
-\texttt{CAMERA} nel manifest c'è, il resto no: permesso a runtime, scatto,
-caricamento su Supabase Storage, e la colonna \texttt{photo\_url} sulla tabella,
-che oggi non esiste. È per quello che il campo non lo mando in scrittura: la
-richiesta fallirebbe.
+La funzione si trova nel modulo \texttt{:domain}: riceve la lista dei task e i
+filtri e restituisce la lista da mostrare.
 
-Terzo, un worker che chiami \texttt{RefreshTasksUseCase} ogni tanto, o quando
-torna la linea. Lo use case l'ho tenuto isolato apposta.
+Il \texttt{HomeViewModel} usa \texttt{combine} per ricalcolare il risultato
+quando cambia uno dei parametri.
 
-Poi ci sono le cose meno urgenti. La navigazione, per dire: oggi è una variabile
-dentro \texttt{MainActivity}, dove \texttt{null} vuol dire dashboard, stringa
-vuota vuol dire ``sto creando'' e un id vuol dire ``sto modificando quello''.
-Funziona ed è pochissimo codice. Alla quarta schermata non si capirebbe più
-niente e passerei a Navigation Compose. Nella lista lunga ci sono anche il
-riordino trascinando le card (la colonna \texttt{sort\_order} c'è già), la
-paginazione quando i task diventano tanti, e qualche test sulle schermate.
+Quando l'utente scrive nella ricerca non viene quindi fatta nessuna richiesta
+alla rete.
+
+Questa parte è anche semplice da testare perché non dipende da Android e può
+essere eseguita direttamente in una JVM.
+
+Ho dato priorità ai test sulle parti più delicate: parsing delle risposte di
+login, registrazione con conferma tramite email, mapping delle risposte di
+PostgREST e filtri.
+
+Per testare i mapper ho dovuto renderli \texttt{internal} invece che
+\texttt{private}. È una piccola rinuncia all'incapsulamento, ma permette di
+testare direttamente la trasformazione dei dati.
 
 
-\section*{Per compilarlo}
-\addcontentsline{toc}{section}{Per compilarlo}
+\subsection{Gestire un caso anomalo senza chiudere l'app}
 
-Serve un \texttt{local.properties} nella cartella radice, con due righe:
+Ci sono alcuni casi in cui l'app può ricevere dati non validi.
+
+Se una riga arriva senza \texttt{id}, viene ignorata tramite
+\texttt{mapNotNull}, senza bloccare tutta la lista.
+
+Se DataStore non è leggibile, la sessione viene considerata non valida e
+l'app può comunque continuare a funzionare.
+
+Anche se manca \texttt{local.properties}, l'app non viene bloccata all'avvio.
+L'URL viene sostituito con un host non valido e le richieste falliscono come
+normali errori di rete.
+
+L'idea è quindi di gestire gli errori il più vicino possibile al punto in cui
+si verificano.
+
+
+\section{Cosa manca}
+
+Al momento ci sono alcune funzionalità che non sono state completate.
+
+\begin{itemize}
+
+  \item
+  Supporto a Room e cache locale.
+
+  Attualmente, senza connessione a Internet, l'applicazione non riesce a
+  mostrare i task. È probabilmente il limite più evidente nell'utilizzo
+  quotidiano. Era una delle funzionalità che volevo aggiungere se avessi fatto
+  in tempo.
+
+  \item
+  Associazione di una foto a un task.
+
+  Il modello contiene già \texttt{photoUrl} e nel manifest è presente il
+  permesso \texttt{CAMERA}, ma manca ancora tutta la parte necessaria per
+  utilizzare realmente questa funzionalità.
+
+  Sarebbero necessari:
+  \begin{itemize}
+    \item richiesta del permesso a runtime;
+    \item acquisizione della foto;
+    \item caricamento della foto su Supabase Storage;
+  \end{itemize}
+
+  \item
+  Riordinamento dei task tramite trascinamento.
+
+  La colonna \texttt{sort\_order} è già presente e potrebbe essere utilizzata
+  per permettere all'utente di modificare direttamente l'ordine dei task.
+
+  \item
+  Paginazione.
+
+  Nel caso in cui il numero di task cresca molto, sarebbe utile introdurre la
+  paginazione per evitare di caricare tutti i dati contemporaneamente.
+
+\end{itemize}
+
+
+\section{Per compilarlo}
+
+Per compilare il progetto è necessario creare un file
+\texttt{local.properties} nella cartella principale del progetto con le
+seguenti proprietà:
 
 \begin{lstlisting}
 SUPABASE_URL=https://<progetto>.supabase.co
 SUPABASE_ANON_KEY=<chiave anonima>
 \end{lstlisting}
 
-Il file non è versionato, per ovvi motivi. Il \texttt{minSdk} è 31, cioè Android
-12, così ho \texttt{java.time} senza doverlo ritradurre con il desugaring;
-\texttt{compileSdk} e \texttt{targetSdk} sono 36. I test si lanciano con
-\texttt{./gradlew test} e non vogliono nessun emulatore acceso.
+I test possono essere eseguiti con:
+
+\begin{lstlisting}
+./gradlew test
+\end{lstlisting}
 
 \end{document}
